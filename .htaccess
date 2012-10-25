@@ -1,0 +1,10 @@
+
+<IfModule mod_rewrite.c>
+	RewriteEngine on
+#	RewriteBase /
+
+	# ***** _atto-gate.php *****
+	RewriteCond %{REQUEST_FILENAME} \.(html|php)$ [OR]
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule (.*) app/_atto-gate.php/$1 [QSA,L]
+</IfModule>

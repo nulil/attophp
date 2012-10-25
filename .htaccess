@@ -1,4 +1,12 @@
 
+<Files ~ "^\.(htpasswd|htaccess)$">
+    deny from all
+</Files>
+
+Options FollowSymLinks
+Options -Indexes
+
+
 <IfModule mod_rewrite.c>
 	RewriteEngine on
 #	RewriteBase /
@@ -6,5 +14,7 @@
 	# ***** _atto-gate.php *****
 	RewriteCond %{REQUEST_FILENAME} \.(html|php)$ [OR]
 	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteRule (.*) app/_atto-gate.php/$1 [QSA,L]
+#	RewriteRule (.*) app/_atto-gate.php?__uri__=$1 [QSA,L]
 </IfModule>

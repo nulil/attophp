@@ -112,14 +112,14 @@ class AttoDbo__Manager {
 	}
 
 	/**
-	 * setConectionInfo
+	 * setConnectionInfo
 	 * 
-	 * @method setConectionInfo
+	 * @method setConnectionInfo
 	 * @param string $connection_name
 	 * @param array $params key is 'type',	'host',	'port',	'db', 'user', 'password', 'options'
-	 * @return boolean false:$nameが既に設定されている
+	 * @return boolean false:$connection_nameが既に設定されている
 	 */
-	public function setConectionInfo( $connection_name, array $params ) {
+	public function setConnectionInfo( $connection_name, array $params ) {
 
 		if ( isset( $this->parameters[$connection_name] ) ) {
 			return false;

@@ -44,7 +44,7 @@ class AttoDbo__ConnectionPgsql implements AttoDbo__IConnection {
 				. (isset( $params['port'] ) ? ' port=' . $params['port'] : '')
 				. ' dbname=' . $params['db']
 				. ' user=' . $params['user']
-				. ' password=' . $params['pass'] ) or null;
+				. ' password=' . $params['pass'], PGSQL_CONNECT_FORCE_NEW ) or null;
 		// データベースを選択
 		if ( is_null( $con ) ) {
 			throw new AttoDbo__Exception( 'DBへの接続に失敗しました' );
@@ -62,7 +62,7 @@ class AttoDbo__ConnectionPgsql implements AttoDbo__IConnection {
 	 */
 	public function beginTransaction() {
 		$this->is_begin = true;
-		return !!pg_query( 'BEGIN', $this->_con );
+		return !!pg_query( $this->_con, 'BEGIN' );
 	}
 
 	/**
@@ -71,7 +71,7 @@ class AttoDbo__ConnectionPgsql implements AttoDbo__IConnection {
 	 */
 	public function commit() {
 		$this->is_begin = false;
-		return !!pg_query( 'COMMIT', $this->_con );
+		return !!pg_query( $this->_con, 'COMMIT' );
 	}
 
 	/**
@@ -104,7 +104,7 @@ class AttoDbo__ConnectionPgsql implements AttoDbo__IConnection {
 	 * @return int 
 	 */
 	public function exec( $statement ) {
-		pg_query( $statement, $this->_con );
+		pg_query( $this->_con, $statement );
 		return pg_affected_rows( $this->_con );
 	}
 
@@ -122,7 +122,7 @@ class AttoDbo__ConnectionPgsql implements AttoDbo__IConnection {
 	 */
 	public function lastInsertId() {//$name = null ) {
 		// PostgreSQL  >= 8.1
-		$con = pg_query( 'SELECT LASTVAL() AS LV', $this->_con ); // @todo no debug
+		$con = pg_query( $this->_con, 'SELECT LASTVAL() AS LV' ); // @todo no debug
 		$row = pg_fetch_array( $con );
 		return intval( $row[0] );
 	}
@@ -157,7 +157,7 @@ class AttoDbo__ConnectionPgsql implements AttoDbo__IConnection {
 	 * @return \AttoDbo__StatementPgsql 
 	 */
 	public function query( $statement ) {
-		return new AttoDbo__StatementPgsql( pg_query( $statement, $this->_con ) );
+		return new AttoDbo__StatementPgsql( pg_query( $this->_con, $statement ) );
 	}
 
 	/**
@@ -186,7 +186,7 @@ class AttoDbo__ConnectionPgsql implements AttoDbo__IConnection {
 	 */
 	public function rollBack() {
 		$this->is_begin = false;
-		return !!pg_query( 'ROLLBACK', $this->_con );
+		return !!pg_query( $this->_con, 'ROLLBACK' );
 	}
 
 	public function __destruct() {

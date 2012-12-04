@@ -40,7 +40,7 @@ class AttoDbo__ConnectionMysql implements AttoDbo__IConnection {
 		$params = array_merge( $def_params, $params );
 
 		$con = mysql_connect( $params['host'] . (isset( $params['port'] ) ? ':' . $params['port'] : ''), $params['user'],
-												  $params['password'] ) or null;
+												  $params['password'], true ) or null;
 		// データベースを選択
 		if ( $con ) {
 			mysql_select_db( $params['db'], $con ) or ($con = null);

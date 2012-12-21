@@ -22,7 +22,7 @@ define( 'DS', DIRECTORY_SEPARATOR );
  */
 class Atto {
 
-	const VERSION = '0.2.10';
+	const VERSION = '0.2.11';
 
 	/**
 	 * @var array 
@@ -124,6 +124,16 @@ class Atto {
 			$value = '/' . substr( $value, strlen( self::getSslBaseUri() ) );
 		}
 		return $value;
+	}
+	
+	/**
+	 * _deleteProtocolAndDomain
+	 * 
+	 * @param string $value
+	 * @return string 
+	 */
+	static private function _deleteProtocolAndDomain($value){
+		return preg_replace('|^[^?]*://[^/]*|u', '', $value);
 	}
 
 	//
@@ -599,7 +609,7 @@ class Atto {
 	static public function requestUri() {
 		static $val = null;
 		if ( $val === null ) {
-			$val = self::_deleteSslUri( $_SERVER['REQUEST_URI'] );
+			$val = self::_deleteSslUri( self::_deleteProtocolAndDomain($_SERVER['REQUEST_URI']) );
 		}
 		return $val;
 	}

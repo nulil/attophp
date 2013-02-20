@@ -1,11 +1,11 @@
 <?php
 
 /**
- * AttoDbo__IStatement
+ * AttoDbo_IStatement
  */
-interface AttoDbo__IStatement {
+interface AttoDbo_IStatement {
 
-	public function __construct( $con, AttoDbo__IConnection $connection = null, $statement = null );
+	public function __construct( $con, AttoDbo_IConnection $connection = null, $statement = null );
 
 	/**
 	 * @return int 
@@ -45,7 +45,7 @@ interface AttoDbo__IStatement {
 	 * @param $fetch_type
 	 * @return {mixed} 
 	 */
-	public function fetch( $fetch_type = AttoDbo__IConnection::FETCH_BOTH );
+	public function fetch( $fetch_type = AttoDbo_IConnection::FETCH_BOTH );
 
 	/**
 	 * fetchAll
@@ -54,7 +54,7 @@ interface AttoDbo__IStatement {
 	 * @param $fetch_type
 	 * @return {array} 
 	 */
-	public function fetchAll( $fetch_type = AttoDbo__IConnection::FETCH_BOTH );
+	public function fetchAll( $fetch_type = AttoDbo_IConnection::FETCH_BOTH );
 
 	/**
 	 * fetchColumn

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AttoDbo__StatementPgsql
+ * AttoDbo_StatementMysql
  * 
  * 
  * PHP versions 5
@@ -16,66 +16,59 @@
  * @link		
  * @license		MIT License (http://www.opensource.org/licenses/mit-license.php)
  * 
- * @class 
+ * @class  
  */
-class AttoDbo__StatementPgsql implements AttoDbo__IStatement {
+class AttoDbo_StatementMysql implements AttoDbo_IStatement {
 
 	private $_con;
 	private $_original_con;
-	private $_params_map;
-	private $_pripare_name;
+	private $_statement;
+	private $_connection;
+	private $_params;
 	static private $_FETCH_TYPES = array(
-		AttoDbo__IConnection::FETCH_BOTH  => PGSQL_BOTH,
-		AttoDbo__IConnection::FETCH_ASSOC => PGSQL_ASSOC,
-		AttoDbo__IConnection::FETCH_NUM   => PGSQL_NUM,
-		AttoDbo__IConnection::FETCH_OBJ   => null
+		AttoDbo_IConnection::FETCH_BOTH  => MYSQL_BOTH,
+		AttoDbo_IConnection::FETCH_ASSOC => MYSQL_ASSOC,
+		AttoDbo_IConnection::FETCH_NUM   => MYSQL_NUM,
+		AttoDbo_IConnection::FETCH_OBJ   => null
 	);
 
-	public function __construct( $con, $pripare_name = null, $params_map = null ) {
+	public function __construct( $con, AttoDboConnectionMysql $connection = null, $statement = null ) {
 		$this->_con = $con;
 		$this->_original_con = $con;
-		$this->_pripare_name = $pripare_name;
-		$this->_params_map = $params_map;
+		$this->_connection = $connection;
+		$this->_statement = $statement;
 	}
 
 	/**
-	 * errorCode
-	 * 
-	 * @method errorCode
-	 * @return type 
+	 *
+	 * @return int 
 	 */
 	public function errorCode() {
-		return pg_result_status( $this->_con, PGSQL_STATUS_LONG );
+		return mysql_errno( $this->_con );
 	}
 
 	/**
-	 * errorInfo
-	 * 
-	 * @method errorInfo
-	 * @return string 
+	 *
+	 * @return array 
 	 */
 	public function errorInfo() {
-		return pg_result_status( $this->_con, PGSQL_STATUS_STRING );
+		return array( mysql_errno( $this->_con ), mysql_errno( $this->_con ), mysql_error( $this->_con ) );
 	}
 
 	/**
-	 * rowCount
-	 * 
-	 * @method rowCount
+	 *
 	 * @return int 
 	 */
 	public function rowCount() {
-		return pg_num_rows( $this->_con );
+		return mysql_num_rows( $this->_con );
 	}
 
 	/**
-	 * columnCount
-	 * 
-	 * @method columnCount
-	 * @return int
+	 *
+	 * @return int 
 	 */
 	public function columnCount() {
-		return pg_num_fields( $this->_con );
+		return mysql_num_fields( $this->_con );
 	}
 
 	/**
@@ -85,14 +78,13 @@ class AttoDbo__StatementPgsql implements AttoDbo__IStatement {
 	 * 
 	 * @method execute
 	 * @param array $params
-	 * @return bool 
+	 * @return boolean 
 	 */
 	public function execute( array $params = null ) {
-		$args = array( );
-		foreach ( $this->_params_map as $param ) {
-			$args[] = $params[$param];
-		}
-		$this->_con = pg_execute( $this->_original_con, $this->_pripare_name, $args );
+		$pattern = '/(:[a-zA-Z][a-zA-Z0-9_])*/u';
+		$this->_params = $params;
+		$sql = preg_replace( $pattern, array( $this, '_replaceParam' ), $this->_statement );
+		$this->_con = mysql_query( $sql, $this->_original_con );
 		return !!$this->_con;
 	}
 
@@ -103,11 +95,11 @@ class AttoDbo__StatementPgsql implements AttoDbo__IStatement {
 	 * @param $fetch_type
 	 * @return mixed 
 	 */
-	public function fetch( $fetch_type = AttoDbo__IConnection::FETCH_BOTH ) {
-		if ( $fetch_type === AttoDbo__IConnection::FETCH_OBJ ) {
-			return pg_fetch_object( $this->_con );
+	public function fetch( $fetch_type = AttoDbo_IConnection::FETCH_BOTH ) {
+		if ( $fetch_type === AttoDbo_IConnection::FETCH_OBJ ) {
+			return mysql_fetch_object( $this->_con );
 		}
-		return pg_fetch_array( $this->_con, null, self::$_FETCH_TYPES[$fetch_type] );
+		return mysql_fetch_array( $this->_con, self::$_FETCH_TYPES[$fetch_type] );
 	}
 
 	/**
@@ -117,16 +109,12 @@ class AttoDbo__StatementPgsql implements AttoDbo__IStatement {
 	 * @param $fetch_type
 	 * @return array 
 	 */
-	public function fetchAll( $fetch_type = AttoDbo__IConnection::FETCH_BOTH ) {
-		if ( $fetch_type === AttoDbo__IConnection::FETCH_ASSOC ) {
-			return pg_fetch_all( $this->_con );
-		}
-
-		if ( pg_num_rows( $this->_con ) <= 0 ) {
+	public function fetchAll( $fetch_type = AttoDbo_IConnection::FETCH_BOTH ) {
+		if ( mysql_num_rows( $this->_con ) <= 0 ) {
 			return false;
 		}
 		$res = array( );
-		pg_result_seek( $this->_con, 0 );
+		mysql_data_seek( $this->_con, 0 );
 		while ( $row = $this->fetch( $fetch_type ) ) {
 			array_push( $res, $row );
 		}
@@ -157,7 +145,7 @@ class AttoDbo__StatementPgsql implements AttoDbo__IStatement {
 	 * @return mixed 
 	 */
 	public function fetchObject( $class_name = 'stdClass', array $ctor_args = null ) {
-		return pg_fetch_object( $this->_con, null, $class_name, $ctor_args );
+		return mysql_fetch_object( $this->_con, $class_name, $ctor_args );
 	}
 
 	/**
@@ -167,12 +155,24 @@ class AttoDbo__StatementPgsql implements AttoDbo__IStatement {
 	 * @return boolean
 	 */
 	public function closeCursor() {
-		return pg_close( $this->_con );
+		return mysql_close( $this->_con );
 	}
 
 	public function __destruct() {
 		unset( $this->_con );
 		unset( $this->_original_con );
+		unset( $this->_connection );
+	}
+
+	private function _replaceParam( $matchs ) {
+		if ( array_key_exists( $this->_params, $matchs[1] ) ) {
+			$val = $this->_params[$matchs[1]];
+			if ( is_null( $val ) ) {
+				return $this->connection_mysql->quote( $val, AttoDbo_ForPdo::PARAM_NULL );
+			}
+			return $this->connection_mysql->quote( $val );
+		}
+		return $matchs[1];
 	}
 
 	//
@@ -200,7 +200,7 @@ class AttoDbo__StatementPgsql implements AttoDbo__IStatement {
 	 * @param type $length
 	 * @param type $driver_options 
 	 */
-	public function bindParam( $parameter, &$variable, $data_type = AttoDbo__ForPdo::PARAM_STR, $length = null, $driver_options = null ) {
+	public function bindParam( $parameter, &$variable, $data_type = AttoDbo_ForPdo::PARAM_STR, $length = null, $driver_options = null ) {
 		trigger_error( 'not supported', E_USER_WARNING );
 	}
 
@@ -210,7 +210,7 @@ class AttoDbo__StatementPgsql implements AttoDbo__IStatement {
 	 * @param type $value
 	 * @param type $data_type 
 	 */
-	public function bindValue( $parameter, $value, $data_type = AttoDbo__ForPdo::PARAM_STR ) {
+	public function bindValue( $parameter, $value, $data_type = AttoDbo_ForPdo::PARAM_STR ) {
 		trigger_error( 'not supported', E_USER_WARNING );
 	}
 

@@ -22,7 +22,7 @@ define( 'DS', DIRECTORY_SEPARATOR );
  */
 class Atto {
 
-	const VERSION = '0.2.11';
+	const VERSION = '0.3.0';
 
 	/**
 	 * @var array 
@@ -438,10 +438,10 @@ class Atto {
 			$fn = create_function( '$v', 'return camel_case_to_hyphen_case( $v );' );
 		}
 		$file_uri = args_join( DS, array_map( $fn, explode( DS
-								, str_replace( array( '\\', '__' ), DS, ltrim( $class_name, '\\' ) ) ) ) );
+								, str_replace( array( '\\', '_' ), DS, ltrim( $class_name, '\\' ) ) ) ) );
 
 		if ( starts_with( 'atto-', $file_uri ) ) {
-			$path = self::makeAccessPath( array( self::dir_atto_autoLoad() ), $file_uri, array( '.php' ) );
+			$path = self::makeAccessPath( array( self::dir_atto_classes() ), $file_uri, array( '.php' ) );
 			if ( $path ) {
 				require $path;
 				return true;
@@ -462,8 +462,8 @@ class Atto {
 		$extends = array( '.php', '.inc' );
 
 		$dirs = array(
-			self::dir_autoLoad(),
-			self::dir_atto_autoLoad(),
+			self::dir_classes(),
+			self::dir_atto_classes(),
 		);
 		foreach ( $dirs as $dir ) {
 			$path = self::makeAccessPath( $dir, $file_uri, $extends );
@@ -762,10 +762,10 @@ class Atto {
 	 * @method dir_atto_util
 	 * @return string atto/etc directry path
 	 */
-	static public function dir_atto_autoLoad() {
+	static public function dir_atto_classes() {
 		static $val = null;
 		if ( $val === null ) {
-			$val = self::dir_atto() . 'auto-load' . DS;
+			$val = self::dir_atto() . 'classes' . DS;
 		}
 		return $val;
 	}
@@ -908,10 +908,10 @@ class Atto {
 	 * @method dir_autoLoad
 	 * @return string app/auto-load directry path
 	 */
-	static public function dir_autoLoad() {
+	static public function dir_classes() {
 		static $val = null;
 		if ( $val === null ) {
-			$val = self::dir_app() . 'auto-load' . DS;
+			$val = self::dir_app() . 'classes' . DS;
 		}
 		return $val;
 	}

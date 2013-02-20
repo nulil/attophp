@@ -3,11 +3,11 @@
 if ( class_exists( 'PDO' ) ) {
 
 	/**
-	 * AttoDbo__IConnection
+	 * AttoDbo_IConnection
 	 * 
 	 * @interface
 	 */
-	interface AttoDbo__IConnection {
+	interface AttoDbo_IConnection {
 
 		const BASE = 'PDO';
 
@@ -167,11 +167,11 @@ if ( class_exists( 'PDO' ) ) {
 else {
 
 	/**
-	 * AttoDbo__IConnection
+	 * AttoDbo_IConnection
 	 * 
 	 * @interface 
 	 */
-	interface AttoDbo__IConnection {
+	interface AttoDbo_IConnection {
 
 		const BASE = 'legacy';
 
@@ -272,13 +272,13 @@ else {
 
 		/**
 		 * @param string $sql
-		 * @return \AttoDbo__IStatement 
+		 * @return \AttoDbo_IStatement 
 		 */
 		public function prepare( $sql ); //, array $driver_options = array( ) )
 
 		/**
 		 * @param string $sql
-		 * @return \AttoDbo__IStatement 
+		 * @return \AttoDbo_IStatement 
 		 */
 		public function query( $sql );
 

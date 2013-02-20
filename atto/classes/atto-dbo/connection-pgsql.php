@@ -3,7 +3,7 @@
 require_once dirname( __FILE__ ) . DS . 'statement-pgsql.php';
 
 /**
- * AttoDbo__ConnectionPgsql
+ * AttoDbo_ConnectionPgsql
  * 
  * wrapper of pgsql functions
  * 
@@ -22,7 +22,7 @@ require_once dirname( __FILE__ ) . DS . 'statement-pgsql.php';
  * 
  * @class 
  */
-class AttoDbo__ConnectionPgsql implements AttoDbo__IConnection {
+class AttoDbo_ConnectionPgsql implements AttoDbo_IConnection {
 
 	const BASE = 'postgresql functions';
 
@@ -47,7 +47,7 @@ class AttoDbo__ConnectionPgsql implements AttoDbo__IConnection {
 				. ' password=' . $params['pass'], PGSQL_CONNECT_FORCE_NEW ) or null;
 		// データベースを選択
 		if ( is_null( $con ) ) {
-			throw new AttoDbo__Exception( 'DBへの接続に失敗しました' );
+			throw new AttoDbo_Exception( 'DBへの接続に失敗しました' );
 		}
 		$this->_con = $con;
 	}
@@ -132,7 +132,7 @@ class AttoDbo__ConnectionPgsql implements AttoDbo__IConnection {
 	 * @staticvar array $statements
 	 * @staticvar int $count
 	 * @param string $statement
-	 * @return \AttoDbo__StatementPgsql 
+	 * @return \AttoDbo_StatementPgsql 
 	 */
 	public function prepare( $statement ) {//, array $driver_options = array( ) ) {
 		static $statements = array( );
@@ -145,19 +145,19 @@ class AttoDbo__ConnectionPgsql implements AttoDbo__IConnection {
 				'sql'   => preg_replace_callback( '/(:[a-zA-Z][a-zA-Z0-9_]*)/u', array( $this, '_replace_param' ), $statement ),
 				'params_map' => $this->params_map );
 		}
-		$name = 'AttoDbo__ConnectionPgsql#prepare_' . $statements[$statement]['count'];
+		$name = 'AttoDbo_ConnectionPgsql#prepare_' . $statements[$statement]['count'];
 		$sql = $statements[$statement]['sql'];
 		$params_map = $statements[$statement]['params_map'];
-		return new AttoDbo__StatementPgsql( pg_prepare( $this->_con, $name, $sql ), $name, $params_map );
+		return new AttoDbo_StatementPgsql( pg_prepare( $this->_con, $name, $sql ), $name, $params_map );
 	}
 
 	/**
 	 *
 	 * @param string $statement
-	 * @return \AttoDbo__StatementPgsql 
+	 * @return \AttoDbo_StatementPgsql 
 	 */
 	public function query( $statement ) {
-		return new AttoDbo__StatementPgsql( pg_query( $this->_con, $statement ) );
+		return new AttoDbo_StatementPgsql( pg_query( $this->_con, $statement ) );
 	}
 
 	/**
@@ -166,15 +166,15 @@ class AttoDbo__ConnectionPgsql implements AttoDbo__IConnection {
 	 * @param int $parameter_type
 	 * @return string 
 	 */
-	public function quote( $string, $parameter_type = AttoDbo__IConnection::PARAM_STR ) {
-		if ( $parameter_type === AttoDbo__IConnection::PARAM_NULL ) {
+	public function quote( $string, $parameter_type = AttoDbo_IConnection::PARAM_STR ) {
+		if ( $parameter_type === AttoDbo_IConnection::PARAM_NULL ) {
 			return 'NULL';
 		}
 		$upper = trim( strtoupper( $string ) );
-		if ( $parameter_type === AttoDbo__IConnection::PARAM_BOOL && ($upper == 'TRUE' || $upper == 'FALSE') ) {
+		if ( $parameter_type === AttoDbo_IConnection::PARAM_BOOL && ($upper == 'TRUE' || $upper == 'FALSE') ) {
 			return $upper;
 		}
-		if ( $parameter_type !== AttoDbo__IConnection::PARAM_STR && (is_int( $string ) || is_numeric( $string )) ) {
+		if ( $parameter_type !== AttoDbo_IConnection::PARAM_STR && (is_int( $string ) || is_numeric( $string )) ) {
 			return $upper;
 		}
 		return pg_escape_identifier( $string, $this->_con );

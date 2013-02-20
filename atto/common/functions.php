@@ -164,6 +164,27 @@ function camel_case_to_hyphen_case( $value, $isLcfirst = true ) {
 }
 
 /**
+ * hyphen_case_to_camel_case
+ * 
+ * @staticvar {lambda} $callback
+ * @param {string} $value	hyphen case string
+ * @param {boolean} $isUcfirst
+ * @return {string} 
+ */
+function hyphen_case_to_camel_case( $value, $isUcfirst = false ) {
+	static $callback = null;
+	if ( $callback == null ) {
+		$callback = create_function( '$matchs', 'return strtoupper($matchs[1]);' );
+	}
+
+	$value = preg_replace_callback( '/-(.)/u', $callback, $value );
+	if ( $isUcfirst ) {
+		$value = ucfirst( $value );
+	}
+	return $value;
+}
+
+/**
  * virtual_realpath
  * 
  * @param string $value

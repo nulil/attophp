@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AttoDbo__Manager
+ * AttoDbo_Manager
  * 
  * 
  * PHP versions 5
@@ -18,13 +18,13 @@
  * 
  * @class
  */
-class AttoDbo__Manager {
+class AttoDbo_Manager {
 
 	const TYPE_MYSQL = 'mysql';
 	const TYPE_PGSQL = 'pgsql';
 
 	/**
-	 * $parametersの値でインスタンス化されたAttoDbo__IConnectionオブジェクトを保持する
+	 * $parametersの値でインスタンス化されたAttoDbo_IConnectionオブジェクトを保持する
 	 * @var array 
 	 */
 	protected $connections = array( );
@@ -37,7 +37,7 @@ class AttoDbo__Manager {
 
 	/**
 	 * シングルトン用
-	 * @var \AttoDbo__Manager
+	 * @var \AttoDbo_Manager
 	 */
 	static protected $single = null;
 
@@ -48,7 +48,7 @@ class AttoDbo__Manager {
 	 * まだインスタンスされていなければ、インスタンス化し返す
 	 * 
 	 * @method getInstanse
-	 * @return \AttoDbo__Manager 
+	 * @return \AttoDbo_Manager 
 	 */
 	static public function getInstanse() {
 		if ( self::$single === null ) {
@@ -154,7 +154,7 @@ class AttoDbo__Manager {
 	 * 
 	 * @method getConnection
 	 * @param string $connection_name
-	 * @return \AttoDbo__IConnection
+	 * @return \AttoDbo_IConnection
 	 */
 	public function getConnection( $connection_name = null ) {
 		if ( is_null( $connection_name ) ) {
@@ -163,7 +163,7 @@ class AttoDbo__Manager {
 
 		if ( isset( $this->parameters[$connection_name] ) ) {
 			if ( !isset( $this->connections[$connection_name] ) ) {
-				$dbo_class = self::isPdo() ? 'AttoDbo__ForPdo' : 'AttoDbo__ForLegacy';
+				$dbo_class = self::isPdo() ? 'AttoDbo_ForPdo' : 'AttoDbo_ForLegacy';
 				$this->connections[$connection_name] = new $dbo_class( $this->parameters[$connection_name] );
 			}
 			return $this->connections[$connection_name];

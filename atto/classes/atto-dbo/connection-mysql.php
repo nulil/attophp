@@ -3,7 +3,7 @@
 require_once dirname( __FILE__ ) . DS . 'statement-mysql.php';
 
 /**
- * AttoDbo__ConnectionMysql
+ * AttoDbo_ConnectionMysql
  * 
  * wrapper of mysql functions
  * 
@@ -22,7 +22,7 @@ require_once dirname( __FILE__ ) . DS . 'statement-mysql.php';
  * 
  * @class 
  */
-class AttoDbo__ConnectionMysql implements AttoDbo__IConnection {
+class AttoDbo_ConnectionMysql implements AttoDbo_IConnection {
 
 	const BASE = 'mysql functions';
 
@@ -46,7 +46,7 @@ class AttoDbo__ConnectionMysql implements AttoDbo__IConnection {
 			mysql_select_db( $params['db'], $con ) or ($con = null);
 		}
 		if ( is_null( $con ) ) {
-			throw new AttoDbo__Exception( 'DBへの接続に失敗しました' );
+			throw new AttoDbo_Exception( 'DBへの接続に失敗しました' );
 		}
 		$this->_con = $con;
 	}
@@ -128,19 +128,19 @@ class AttoDbo__ConnectionMysql implements AttoDbo__IConnection {
 	/**
 	 *
 	 * @param string $statement
-	 * @return \AttoDbo__StatementMysql 
+	 * @return \AttoDbo_StatementMysql 
 	 */
 	public function prepare( $statement ) {//, array $driver_options = array( ) ) {
-		return new AttoDbo__StatementMysql( $this->_con, $this, $statement );
+		return new AttoDbo_StatementMysql( $this->_con, $this, $statement );
 	}
 
 	/**
 	 *
 	 * @param string $statement
-	 * @return \AttoDbo__StatementMysql 
+	 * @return \AttoDbo_StatementMysql 
 	 */
 	public function query( $statement ) {
-		return new AttoDbo__StatementMysql( mysql_query( $statement, $this->_con ) );
+		return new AttoDbo_StatementMysql( mysql_query( $statement, $this->_con ) );
 	}
 
 	/**
@@ -148,15 +148,15 @@ class AttoDbo__ConnectionMysql implements AttoDbo__IConnection {
 	 * @param int $parameter_type
 	 * @return string 
 	 */
-	public function quote( $string, $parameter_type = AttoDbo__IConnection::PARAM_STR ) {
-		if ( $parameter_type === AttoDbo__IConnection::PARAM_NULL ) {
+	public function quote( $string, $parameter_type = AttoDbo_IConnection::PARAM_STR ) {
+		if ( $parameter_type === AttoDbo_IConnection::PARAM_NULL ) {
 			return 'NULL';
 		}
 		$upper = trim( strtoupper( $string ) );
-		if ( $parameter_type === AttoDbo__IConnection::PARAM_BOOL && ($upper == 'TRUE' || $upper == 'FALSE') ) {
+		if ( $parameter_type === AttoDbo_IConnection::PARAM_BOOL && ($upper == 'TRUE' || $upper == 'FALSE') ) {
 			return $upper;
 		}
-		if ( $parameter_type !== AttoDbo__IConnection::PARAM_STR && (is_int( $string ) || is_numeric( $string )) ) {
+		if ( $parameter_type !== AttoDbo_IConnection::PARAM_STR && (is_int( $string ) || is_numeric( $string )) ) {
 			return $upper;
 		}
 		return '\'' . mysql_real_escape_string( $string, $this->_con ) . '\'';

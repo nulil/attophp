@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AttoDbo__ForLegacy
+ * AttoDbo_ForLegacy
  * 
  * wrapper of db-api (mysql and postgresql)
  * 
@@ -20,7 +20,7 @@
  * 
  * @class 
  */
-class AttoDbo__ForLegacy implements AttoDbo__IConnection {
+class AttoDbo_ForLegacy implements AttoDbo_IConnection {
 
 	private $_con;
 
@@ -37,16 +37,16 @@ class AttoDbo__ForLegacy implements AttoDbo__IConnection {
 				throw OutOfBoundsException( '想定外のDBです' );
 		}
 
-		$class = 'AttoDbo__Connection' . ucfirst( $params['type'] );
+		$class = 'AttoDbo_Connection' . ucfirst( $params['type'] );
 		if ( !class_exists( $class, false ) ) {
-			require Atto::dir_atto_autoLoad() . 'atto-dao' . DS . 'connection-' . $params['type'] . '.php';
+			require Atto::dir_atto_classes() . 'atto-dao' . DS . 'connection-' . $params['type'] . '.php';
 		}
 
 		$this->_con = new $class( $params );
 	}
 
 	/**
-	 * @return \AttoDbo__IConnection 
+	 * @return \AttoDbo_IConnection 
 	 */
 	public function getOriginalConnection() {
 		return $this->_con;
@@ -111,7 +111,7 @@ class AttoDbo__ForLegacy implements AttoDbo__IConnection {
 
 	/**
 	 * @param string $sql 
-	 * @return \AttoDbo__IStatement 
+	 * @return \AttoDbo_IStatement 
 	 */
 	public function prepare( $sql ) {
 		return $this->_con->prepare( $sql );

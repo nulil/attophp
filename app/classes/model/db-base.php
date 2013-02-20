@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Model__DbBase
+ * Model_DbBase
  */
-class Model__DbBase {
+class Model_DbBase {
 
 	private $_con			 = null;
 	private $_connectionName = null;
 
 	public function __construct($con = null) {
-		if ($con instanceof AttoDbo__IConnection) {
+		if ($con instanceof AttoDbo_IConnection) {
 			$this->_con = $con;
 		}
 		else {
@@ -21,11 +21,11 @@ class Model__DbBase {
 	 * con
 	 * 
 	 * @method con
-	 * @return \AttoDbo__IConnection 
+	 * @return \AttoDbo_IConnection 
 	 */
 	protected function _con() {
 		if ($this->_con === null) {
-			$this->_con = AttoDbo__Manager::getInstanse()->getConnection($this->_connectionName);
+			$this->_con = AttoDbo_Manager::getInstanse()->getConnection($this->_connectionName);
 		}
 		return $this->_con;
 	}

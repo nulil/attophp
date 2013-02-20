@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AttoDbo__ForPdo
+ * AttoDbo_ForPdo
  * 
  * wrapper of PDO
  * 
@@ -20,7 +20,7 @@
  * 
  * @class 
  */
-class AttoDbo__ForPdo implements AttoDbo__IConnection {
+class AttoDbo_ForPdo implements AttoDbo_IConnection {
 
 	private $_con;
 	private $_trans = false;
@@ -54,8 +54,8 @@ class AttoDbo__ForPdo implements AttoDbo__IConnection {
 		$params = array_merge( $def_params, $params );
 
 		switch ( $params['type'] ) {
-//			case AttoDbo__Manager::TYPE_SQLITE:
-//			case AttoDbo__Manager::TYPE_SQLITE2:
+//			case AttoDbo_Manager::TYPE_SQLITE:
+//			case AttoDbo_Manager::TYPE_SQLITE2:
 //				$params['dsn'] = $params['type'] . ':' . $params['db'];
 //				break;
 			case 'mysql':

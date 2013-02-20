@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AttoDbo__Exception
+ * AttoDbo_Exception
  * 
  * 
  * PHP versions 5
@@ -18,6 +18,6 @@
  * 
  * @class 
  */
-class AttoDbo__Exception extends Exception{
+class AttoDbo_Exception extends Exception{
 	
 }
